@@ -18,10 +18,15 @@ variable "common_tags" {
   type = map(string)
 }
 
-variable "public_subnet_address_space" {
+variable "appgw_subnet_address_space" {
   type = list(string)
 }
 
 variable "private_subnet_address_space" {
   type = list(string)
+}
+
+variable "enable_nat_gateway" {
+    type = bool
+    default = true
 }

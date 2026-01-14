@@ -22,3 +22,4 @@ resource "azurerm_nat_gateway_public_ip_association" "main" {
   nat_gateway_id       = azurerm_nat_gateway.main[0].id
   public_ip_address_id = azurerm_public_ip.nat_public_ip[0].id
 }
+

@@ -42,8 +42,8 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefix      = var.appgw_subnet_address_space
-    destination_address_prefix = var.private_subnet_address_space
+    source_address_prefixes      = var.appgw_subnet_address_space
+    destination_address_prefixes = var.private_subnet_address_space
   }
   security_rule {
     name                       = "port-443-allow"
@@ -53,8 +53,8 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefix      = var.appgw_subnet_address_space
-    destination_address_prefix = var.private_subnet_address_space
+    source_address_prefixes      = var.appgw_subnet_address_space
+    destination_address_prefixes = var.private_subnet_address_space
   }
 
   tags = var.common_tags

@@ -2,12 +2,10 @@ output "vnet_id" {
   value = azurerm_virtual_network.main.id
 }
 
-output "subnet_appgw_id" {
-  value = azurerm_subnet.appgw.id
-}
-
-output "subnet_private_id" {
-  value = azurerm_subnet.private.id
+output "subnet_ids" {
+  value = { for k, s in azurerm_subnet.this : 
+  k => s.id 
+  }
 }
 
 output "nat_gateway_id" {

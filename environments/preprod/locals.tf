@@ -7,4 +7,6 @@ locals {
         environment = local.environment
         managed_by = "terraform"
     }
+    
+    name_prefix = "${local.project}-${local.environment}"
 }

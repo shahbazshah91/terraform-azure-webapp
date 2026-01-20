@@ -7,25 +7,24 @@ resource "azurerm_virtual_network" "main" {
   tags = var.common_tags
 }
 
-resource "azurerm_subnet" "appgw" {
-  name                 = "snet-appgw-${var.name_prefix}"
+resource "azurerm_subnet" "this" {
+  for_each             = var.subnets
+
+  name                 = "snet-${each.value.name}-${var.name_prefix}"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = var.appgw_subnet_address_space
-  
+  address_prefixes     = each.value.cidrs
+  default_outbound_access_enabled = each.value.outbound_access_allow
 }
 
-resource "azurerm_subnet" "private" {
-  name                 = "snet-private-${var.name_prefix}"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = var.private_subnet_address_space
-  default_outbound_access_enabled = false
 
-}
+resource "azurerm_subnet_nat_gateway_association" "this" {
+  for_each = {
+    for k,v in var.subnets :
+    k => v if v.attach_nat
+  }
 
-resource "azurerm_subnet_nat_gateway_association" "private" {
-  subnet_id      = azurerm_subnet.private.id
+  subnet_id      = azurerm_subnet[each.key].id
   nat_gateway_id = azurerm_nat_gateway.main[0].id
 }
 
@@ -42,8 +41,8 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefixes      = var.appgw_subnet_address_space
-    destination_address_prefixes = var.private_subnet_address_space
+    source_address_prefixes      = var.subnets["appgw"].cidrs
+    destination_address_prefixes = var.subnets["private"].cidrs
   }
   security_rule {
     name                       = "port-443-allow"
@@ -53,14 +52,14 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefixes      = var.appgw_subnet_address_space
-    destination_address_prefixes = var.private_subnet_address_space
+    source_address_prefixes      = var.subnets["appgw"].cidrs
+    destination_address_prefixes = var.subnets["private"].cidrs
   }
 
   tags = var.common_tags
 }
 
 resource "azurerm_subnet_network_security_group_association" "private" {
-  subnet_id                 = azurerm_subnet.private.id
+  subnet_id                 = azurerm_subnet.this["private"].id
   network_security_group_id = azurerm_network_security_group.nsg_private_subnet.id
 }

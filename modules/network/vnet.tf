@@ -34,7 +34,7 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
   resource_group_name = var.resource_group_name
 
   dynamic "security_rule" {
-    for_each = var.nsg_allowed_ports
+    for_each = toset(var.nsg_allowed_ports)
 
     content {
       name = "allow-port-${security_rule.value}"

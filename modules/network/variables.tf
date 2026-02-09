@@ -6,16 +6,12 @@ variable "location" {
   type = string
 }
 
-variable "vnet_address_space" {
-  type = list(string)
-}
-
 variable "resource_group_name" {
   type = string
 }
 
-variable "common_tags" {
-  type = map(string)
+variable "vnet_address_space" {
+  type = list(string)
 }
 
 variable "subnets" {
@@ -37,12 +33,15 @@ variable "public_subnet_key"   {
   type = string 
 }
 
-variable "nsg_allowed_ports" {
+variable "nsg_allowed_ports_private_subnet" {
   type = list(number)
 }
 
 variable "enable_nat_gateway" {
     type = bool
-    default = true
+    default = false
 }
 
+variable "common_tags" {
+  type = map(string)
+}

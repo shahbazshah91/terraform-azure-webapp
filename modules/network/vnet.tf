@@ -34,11 +34,11 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
   resource_group_name = var.resource_group_name
 
   dynamic "security_rule" {
-    for_each = toset(var.nsg_allowed_ports)
+    for_each = toset(var.nsg_allowed_ports_private_subnet)
 
     content {
       name = "allow-port-${security_rule.value}"
-      priority = 100 + (index(var.nsg_allowed_ports, security_rule.value) * 100)
+      priority = 100 + (index(var.nsg_allowed_ports_private_subnet, security_rule.value) * 100)
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"

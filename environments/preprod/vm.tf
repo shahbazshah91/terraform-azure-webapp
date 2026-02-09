@@ -13,40 +13,38 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
-resource "azurerm_virtual_machine" "main" {
+resource "tls_private_key" "vm_ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "azurerm_linux_virtual_machine" "main" {
   name                  = "vm-${local.name_prefix}"
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
-  network_interface_ids = [azurerm_network_interface.main.id]
-  vm_size               = "Standard_DS1_v2"
+  size                = "Standard_B2ats_v2"
+  admin_username      = "sa"
+  network_interface_ids = [
+    azurerm_network_interface.main.id,
+  ]
 
-  # Uncomment this line to delete the OS disk automatically when deleting the VM
-  # delete_os_disk_on_termination = true
+  admin_ssh_key {
+    username   = "sa"
+    public_key = tls_private_key.vm_ssh.public_key_openssh
+  }
 
-  # Uncomment this line to delete the data disks automatically when deleting the VM
-  # delete_data_disks_on_termination = true
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
 
-  storage_image_reference {
+  source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    offer     = "ubuntu-24_04-lts"  #az vm image list -o table --publisher canonical
+    sku       = "server"
     version   = "latest"
   }
-  storage_os_disk {
-    name              = "myosdisk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = "hostname"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-  tags = {
-    environment = "staging"
-  }
+
+  tags = local.common_tags
 }
+

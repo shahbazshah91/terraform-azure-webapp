@@ -24,7 +24,7 @@ resource "azurerm_subnet_nat_gateway_association" "this" {
     k => v if v.attach_nat
   }
 
-  subnet_id      = azurerm_subnet[each.key].id
+  subnet_id      = azurerm_subnet.this[each.key].id
   nat_gateway_id = azurerm_nat_gateway.main[0].id
 }
 
@@ -33,33 +33,26 @@ resource "azurerm_network_security_group" "nsg_private_subnet" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  security_rule {
-    name                       = "port-80-allow"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefixes      = var.subnets["appgw"].cidrs
-    destination_address_prefixes = var.subnets["private"].cidrs
-  }
-  security_rule {
-    name                       = "port-443-allow"
-    priority                   = 200
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefixes      = var.subnets["appgw"].cidrs
-    destination_address_prefixes = var.subnets["private"].cidrs
+  dynamic "security_rule" {
+    for_each = var.nsg_allowed_ports
+
+    content {
+      name = "allow-port-${security_rule.value}"
+      priority = 100 + (index(var.nsg_allowed_ports, security_rule.value) * 100)
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range = tostring(security_rule.value)
+      source_address_prefixes      = var.subnets[var.public_subnet_key].cidrs
+      destination_address_prefixes = var.subnets[var.private_subnet_key].cidrs
+    }
   }
 
   tags = var.common_tags
 }
 
 resource "azurerm_subnet_network_security_group_association" "private" {
-  subnet_id                 = azurerm_subnet.this["private"].id
+  subnet_id                 = azurerm_subnet.this[var.private_subnet_key].id
   network_security_group_id = azurerm_network_security_group.nsg_private_subnet.id
 }

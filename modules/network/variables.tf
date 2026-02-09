@@ -28,6 +28,19 @@ variable "subnets" {
   }))
 }
 
+variable "private_subnet_key" { 
+  type = string 
+
+}
+
+variable "public_subnet_key"   { 
+  type = string 
+}
+
+variable "nsg_allowed_ports" {
+  type = list(number)
+}
+
 variable "enable_nat_gateway" {
     type = bool
     default = true

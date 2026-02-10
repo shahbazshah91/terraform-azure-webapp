@@ -17,7 +17,7 @@ resource "azurerm_bastion_host" "main" {
 }
 
 module "network" {
-  source = "../../modules/network"
+  source = "./modules/network"
 
   name_prefix = local.name_prefix
   location = azurerm_resource_group.main.location

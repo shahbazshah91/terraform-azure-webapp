@@ -26,7 +26,6 @@ variable "subnets" {
 
 variable "private_subnet_key" { 
   type = string 
-
 }
 
 variable "public_subnet_key"   { 

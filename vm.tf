@@ -5,7 +5,7 @@ resource "azurerm_network_interface" "main" {
 
   ip_configuration {
     name                          = "ipconfig1"
-    subnet_id                     = module.network.subnet_ids["private"]
+    subnet_id                     = module.network.subnet_ids[module.network.private_subnet_key]
     primary = true
     private_ip_address_version = "IPv4"
     private_ip_address_allocation = "Dynamic"

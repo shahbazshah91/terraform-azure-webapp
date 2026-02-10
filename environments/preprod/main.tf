@@ -31,7 +31,7 @@ module "network" {
 
   enable_nat_gateway = true
 
-  nsg_allowed_ports = [80,443]
+  nsg_allowed_ports_private_subnet = [80,443]
 
   common_tags = local.common_tags
 

@@ -17,7 +17,6 @@ resource "azurerm_subnet" "this" {
   default_outbound_access_enabled = each.value.outbound_access_allow
 }
 
-
 resource "azurerm_subnet_nat_gateway_association" "this" {
   for_each = {
     for k,v in var.subnets :

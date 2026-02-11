@@ -9,7 +9,7 @@ locals {
     
     name_prefix = "${local.project}-${var.environment}"
 
-    appgw = {
+    app_gw = {
         backend_address_pool_name      = "${module.network.vnet_name}-beap"
         frontend_port_name             = "${module.network.vnet_name}-feport"
         frontend_ip_configuration_name = "${module.network.vnet_name}-feip"

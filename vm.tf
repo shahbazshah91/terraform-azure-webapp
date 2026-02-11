@@ -1,4 +1,4 @@
-resource "azurerm_network_interface" "main" {
+resource "azurerm_network_interface" "vm_nic" {
   name                = "vm-nic-${local.name_prefix}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -11,6 +11,8 @@ resource "azurerm_network_interface" "main" {
     private_ip_address_allocation = "Dynamic"
 
   }
+
+  tags = local.common_tags
 }
 
 resource "tls_private_key" "vm_ssh" {
@@ -25,7 +27,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   size                = "Standard_B2ats_v2"
   admin_username      = "sa"
   network_interface_ids = [
-    azurerm_network_interface.main.id,
+    azurerm_network_interface.vm_nic.id,
   ]
 
   admin_ssh_key {

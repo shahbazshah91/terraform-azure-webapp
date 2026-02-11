@@ -7,6 +7,8 @@ resource "random_password" "mysql_admin" {
 resource "azurerm_private_dns_zone" "sql_zone" {
   name                = "privatelink.mysql.database.azure.com"
   resource_group_name = azurerm_resource_group.main.name
+
+  tags = local.common_tags
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "sql_zone_link" {
@@ -21,7 +23,7 @@ resource "azurerm_mysql_flexible_server" "main" {
   resource_group_name    = azurerm_resource_group.main.name
   location               = azurerm_resource_group.main.location
   administrator_login    = "sawebapp"
-  administrator_password = random_password.mysql_admin
+  administrator_password = random_password.mysql_admin.result
   backup_retention_days  = 2
   sku_name               = "B_Standard_B1ms"
   version = "8.0.21"
@@ -34,6 +36,8 @@ resource "azurerm_mysql_flexible_server" "main" {
   }
 
   depends_on = [azurerm_private_dns_zone_virtual_network_link.sql_zone_link]
+
+  tags = local.common_tags
 
 }
 
@@ -54,4 +58,6 @@ resource "azurerm_private_endpoint" "private_endpoint_mysql" {
     name                 = "dns-zone-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.sql_zone.id]
   }
+
+  tags = local.common_tags
 }

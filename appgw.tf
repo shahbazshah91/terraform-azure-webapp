@@ -51,6 +51,7 @@ resource "azurerm_application_gateway" "main" {
     port                  = 80
     protocol              = "Http"
     request_timeout       = 20
+    pick_host_name_from_backend_address = false  #override hostname setting from ui
     probe_name            = local.app_gw.probe_name
   }
 
@@ -65,7 +66,7 @@ resource "azurerm_application_gateway" "main" {
 
   probe {
     name = local.app_gw.probe_name
-    #pick_host_name_from_backend_http_settings = true
+    host = "127.0.0.1"
     protocol = "Http"
     path = "/"
     interval = 30

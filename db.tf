@@ -1,5 +1,5 @@
 resource "random_password" "mysql_admin" {
-  length           = 6
+  length           = 9
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
@@ -27,7 +27,7 @@ resource "azurerm_mysql_flexible_server" "main" {
   backup_retention_days  = 2
   sku_name               = "B_Standard_B1ms"
   version = "8.0.21"
-  public_network_access= "Enabled"
+  public_network_access= "Disabled"
 
   storage {
     size_gb = "20"

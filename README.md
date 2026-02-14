@@ -87,8 +87,8 @@ The VNet (10.0.0.0/16) is segmented into three purpose-built subnets:
 
 ## Prerequisites
 
-- **Terraform**: >= 1.5
-- **Azure CLI**: >= 2.40.0
+- **Terraform**: >= 1.14.3
+- **Azure CLI**: >= 2.81.0
 - **Azure Subscription**: Active subscription with contributor access
 - **Service Principal**: For automated deployments (optional)
 

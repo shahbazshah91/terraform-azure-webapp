@@ -23,11 +23,11 @@ module "network" {
   location = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   
-  vnet_address_space = ["10.0.0.0/16"]
+  vnet_address_space = var.vnet_address_space
   subnets = var.subnets
 
-  private_subnet_key = "private"
-  public_subnet_key = "appgw"
+  private_subnet_key = var.private_subnet_key
+  public_subnet_key = var.public_subnet_key
 
   enable_nat_gateway = true
 

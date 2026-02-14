@@ -6,6 +6,10 @@ variable "location" {
   type = string
 }
 
+variable "vnet_address_space" {
+  type = list(string)
+}
+
 variable "subnets" {
   description = "Subnet definitions keyed by logical name (e.g. private, appgw, etc)"
   type = map(object({
@@ -14,4 +18,12 @@ variable "subnets" {
     outbound_access_allow = optional(bool, true)
     attach_nat            = optional(bool, false)
   }))
+}
+
+variable "private_subnet_key" { 
+  type = string 
+}
+
+variable "public_subnet_key"   { 
+  type = string 
 }
